@@ -5,25 +5,24 @@ import neopixel
 import uasyncio as asyncio
 from machine import Pin
 
-PIXEL_PIN = 8
+gc.collect()
+
+from icon import icon
+
+PIXEL_PIN = 7
+PIX_COUNT = 16 * 16
+
+BRIGHTNESS = 0.5
 
 
 async def main():
     pin = Pin(PIXEL_PIN, Pin.OUT)
-    pixels = neopixel.NeoPixel(pin, 256)
-    divider = 5
-    while True:
-        for t in range(16):
-            for p in range(256):
-                c = (t * 16 + p) % 255
-                pixels[p] = (
-                    c // divider,
-                    (255 - c) // divider,
-                    abs(127 - c) // divider,
-                )
+    pixels = neopixel.NeoPixel(pin, PIX_COUNT)
 
-            pixels.write()
-            await asyncio.sleep_ms(200)
+    for p in range(PIX_COUNT):
+        pixels[p] = [int(el * BRIGHTNESS) for el in icon[p * 3 : p * 3 + 3]]
+
+    pixels.write()
 
 
 try:
